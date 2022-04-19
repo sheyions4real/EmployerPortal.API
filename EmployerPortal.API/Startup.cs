@@ -1,7 +1,9 @@
+using EmployerPortal.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,7 +36,25 @@ namespace EmployerPortal.API
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddDbContext<DatabaseContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                }
+            );
+
             services.AddControllers();
+
+            services.AddCors(policy =>
+            {
+                // define what will be allowed to be assesed (headers, methods, origin, etc)
+                policy.AddPolicy("AllowAll", builder =>
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                );
+            });
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployerPortal.API", Version = "v1" });
@@ -47,9 +67,10 @@ namespace EmployerPortal.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployerPortal.API v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployerPortal.API v1"));
 
 
             app.UseSerilogRequestLogging();
@@ -57,6 +78,8 @@ namespace EmployerPortal.API
 
 
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
+
 
             app.UseRouting();
 
