@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace EmployerPortal.API.Data
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<ApiUser>  // Use DbContext for Ef and IdentityDbContextDbContext from Identity Core authentication
     {
         public DatabaseContext(DbContextOptions options) : base(options)
         {
@@ -15,6 +16,8 @@ namespace EmployerPortal.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // Add this line because you are using the IdentityDbContext
+
             modelBuilder.Entity<Employer>()
                 .HasData(
                     new Employer

@@ -1,5 +1,6 @@
 using EmployerPortal.API.Configurations;
 using EmployerPortal.API.Data;
+using EmployerPortal.API.Extensions;
 using EmployerPortal.API.IRepository;
 using EmployerPortal.API.Repository;
 using Microsoft.AspNetCore.Builder;
@@ -75,6 +76,12 @@ namespace EmployerPortal.API
                 .AddNewtonsoftJson(
                 op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
              );
+
+            // IdentityUser
+            // add identity core to our services API
+            services.AddAuthentication();
+            services.ConfigureIdentity();    // this is coming from our custom ServicesExtensions class with configuration
+
 
 
 
