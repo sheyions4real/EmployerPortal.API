@@ -23,8 +23,8 @@ namespace EmployerPortal.API.Data
         public string RelationshipManagerID { get; set; }
 
 
-        public bool? Checked { get; set; }
-        public string? StatusCode { get; set; }
+        public bool Checked { get; set; }
+        public string StatusCode { get; set; }
 
 
     }

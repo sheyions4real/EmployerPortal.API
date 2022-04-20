@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployerPortal.API.Data
 {
@@ -20,6 +21,8 @@ namespace EmployerPortal.API.Data
         public string EmployerContact_Officer_Name { get; set; }
         public string Officer_Position { get; set; }
         public string State_Of_Posting { get; set; }
+
+  
 
     }
 }

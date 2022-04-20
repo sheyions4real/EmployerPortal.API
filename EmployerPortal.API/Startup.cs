@@ -1,4 +1,7 @@
+using EmployerPortal.API.Configurations;
 using EmployerPortal.API.Data;
+using EmployerPortal.API.IRepository;
+using EmployerPortal.API.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -44,13 +47,6 @@ namespace EmployerPortal.API
 
 
 
-
-
-
-
-
-
-
             services.AddControllers();
 
             services.AddCors(policy =>
@@ -62,6 +58,24 @@ namespace EmployerPortal.API
                     .AllowAnyHeader()
                 );
             });
+
+            services.AddAutoMapper(typeof(MapperInitializer));
+
+
+
+            // Dependency Injection
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+
+            // to resolve cyclic dependency issue
+            // install Microsoft.aspnetcore.mvc.Newtonsoft package
+            // this is specifying that ignore where u see the cyclic dependency issue
+
+            services.AddControllers()
+                .AddNewtonsoftJson(
+                op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+             );
+
 
 
             services.AddSwaggerGen(c =>
@@ -96,6 +110,18 @@ namespace EmployerPortal.API
 
             app.UseEndpoints(endpoints =>
             {
+                //// if we want to access our endpoints by Home/Index or Home/Dashboard/1
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern : "{controller=Home}/{action=index}/{id?}"
+                //    );
+
+                // we will use the specific configurations in the Controllers
+                // Attribute routing eg [Router("api/[Controller]"] 
+                // api/Home/HttpVeb i.e Get or Post or Put or Delete
+
+
+
                 endpoints.MapControllers();
             });
         }

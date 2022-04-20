@@ -1,20 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EmployerPortal.API.Data
+namespace EmployerPortal.API.Models
 {
-    public class Schedule : BaseIdentity
+    public class CreateScheduleDTO 
     {
         public int IDNO { get; set; }
 
-
-        [ForeignKey(nameof(Employer))]
         public string EmployerCode { get; set; }
-        public Employer Employer { get; set; }
-
-
-
-
+        public EmployerDTO Employer { get; set; }
         public string RefNo { get; set; }
         public double Amount { get; set; }
         public double Amount_Processed { get; set; }
@@ -23,7 +16,16 @@ namespace EmployerPortal.API.Data
         public DateTime ValueDate { get; set; }
         public bool Checked { get; set; }
         public string StatusCode { get; set; }
+    }
+
+    public class ScheduleDTO : CreateScheduleDTO
+    {
+        public int Id { get; set; } // automatically will be the identity column
+        public string CreatedBy { get; set; }
+        public DateTime DateCreated { get; set; }
 
 
+        public string ModifiedBy { get; set; }
+        public DateTime DateModified { get; set; }
     }
 }

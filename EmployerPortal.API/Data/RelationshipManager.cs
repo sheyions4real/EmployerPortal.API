@@ -1,4 +1,6 @@
-﻿namespace EmployerPortal.API.Data
+﻿using System.Collections.Generic;
+
+namespace EmployerPortal.API.Data
 {
     public class RelationshipManager : BaseIdentity
     {
@@ -12,5 +14,7 @@
         public string AgentCode { get; set; }
         public string BranchCode { get; set; }
         public string StateOfPosting { get; set; }
+
+        public virtual IList<EmployerAllocation> EmployerAllocations { get; set; }
     }
 }
