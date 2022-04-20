@@ -42,6 +42,15 @@ namespace EmployerPortal.API
                 }
             );
 
+
+
+
+
+
+
+
+
+
             services.AddControllers();
 
             services.AddCors(policy =>

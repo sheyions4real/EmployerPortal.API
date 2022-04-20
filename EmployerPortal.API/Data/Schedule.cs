@@ -16,12 +16,13 @@ namespace EmployerPortal.API.Data
 
 
         public string RefNo { get; set; }
-        public decimal Amount { get; set; }
-        public decimal Amount_Processed { get; set; }
-        public decimal Refund_Amount { get; set; }
+        public double Amount { get; set; }
+        public double Amount_Processed { get; set; }
+        public double Refund_Amount { get; set; }
         public string Description { get; set; }
         public DateTime ValueDate { get; set; }
         public bool? Checked { get; set; }
+        public string? StatusCode { get; set; }
 
 
     }
