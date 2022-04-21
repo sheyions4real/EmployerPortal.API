@@ -15,8 +15,8 @@ namespace EmployerPortal.API.Configurations
             CreateMap<Schedule, ScheduleDTO>().ReverseMap();
             CreateMap<RelationshipManager, RelationshipManagerDTO>().ReverseMap();
             CreateMap<NewPaymentSchedule, NewPaymentScheduleDTO>().ReverseMap();
-
-
+            CreateMap<UserDTO, ApiUser>().ReverseMap();
+            CreateMap<LoginUserDTO, ApiUser>().ReverseMap();
 
 
             CreateMap<Employer, CreateEmployerDTO>().ReverseMap();
