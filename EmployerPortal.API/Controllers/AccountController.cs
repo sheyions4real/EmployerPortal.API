@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployerPortal.API.Data;
 using EmployerPortal.API.Models;
+using EmployerPortal.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +20,21 @@ namespace EmployerPortal.API.Controllers
        // private readonly SignInManager<ApiUser> _signInManager; //// User manager comes from IdentiyCore
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
+        private readonly IAuthManager _authManager;
 
-        public AccountController(UserManager<ApiUser> userManager, 
+
+        public AccountController(UserManager<ApiUser> userManager,
           //  SignInManager<ApiUser> signInManager, 
+          IAuthManager authManager,
             ILogger<AccountController> logger, 
             IMapper mapper)
         {
             _userManager = userManager;
-           // _signInManager = signInManager;
+            // _signInManager = signInManager;
+            _authManager = authManager;
             _logger = logger;
             _mapper = mapper;
+
         }
 
 
@@ -39,6 +45,7 @@ namespace EmployerPortal.API.Controllers
         [HttpPost]
         [Route("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
@@ -78,6 +85,45 @@ namespace EmployerPortal.API.Controllers
             }
         }
 
+        // Login authentication to generate token
+        // All controller actions here
+       
+        [HttpPost]
+        [Route("Login")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
+        {
+            _logger.LogInformation($"Login Attempt for {userDTO.Email} ");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+
+                var result = await _authManager.ValidateUser(userDTO);
+                if (!result)
+                {
+                    return Unauthorized();
+                }
+
+                // since user is validated return token
+                return Accepted(new { Token = await _authManager.GenerateToken() });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
+                return Problem($"Something Went Wrong in the {nameof(Login)}", statusCode: 500);
+
+
+            }
+        }
+
 
 
         //// All controller actions here
@@ -94,7 +140,7 @@ namespace EmployerPortal.API.Controllers
 
         //    try
         //    {
-                
+
         //        var result = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, false, false);
         //        if (!result.Succeeded)
         //        {

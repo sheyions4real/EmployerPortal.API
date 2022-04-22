@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EmployerPortal.API.IRepository;
 using EmployerPortal.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,7 +33,7 @@ namespace EmployerPortal.API.Controllers
 
 
 
-
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,7 +56,7 @@ namespace EmployerPortal.API.Controllers
 
 
 
-
+        [Authorize]   // or extend the Route attibute [HttpGet("{id:int}"), Authorize] or at controller level
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

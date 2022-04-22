@@ -3,6 +3,7 @@ using EmployerPortal.API.Data;
 using EmployerPortal.API.Extensions;
 using EmployerPortal.API.IRepository;
 using EmployerPortal.API.Repository;
+using EmployerPortal.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -66,7 +67,7 @@ namespace EmployerPortal.API
 
             // Dependency Injection
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+            services.AddTransient<IAuthManager, AuthManager>();   // used AddScoped because one will served one for the entire application
 
             // to resolve cyclic dependency issue
             // install Microsoft.aspnetcore.mvc.Newtonsoft package
@@ -81,12 +82,55 @@ namespace EmployerPortal.API
             // add identity core to our services API
             services.AddAuthentication();
             services.ConfigureIdentity();    // this is coming from our custom ServicesExtensions class with configuration
+            services.ConfigureJWT(Configuration);    // configure the JWT for the application
+
+
+            //// the default swagger doc
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployerPortal.API", Version = "v1" });
+            //});
+
+            // enable swagger documentation to use the JWT token
+            AddSwaggerDoc(services);
 
 
 
+        }
 
+        // add securitydefinition and requirement configuration to the swagger doc to enable JWT bearer authentication
+        private static void AddSwaggerDoc(IServiceCollection services)
+        {
             services.AddSwaggerGen(c =>
             {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authentication header using Bearer scheme.
+                                Enter 'Bearer' [space] and then your token in the text input below.
+                                Example: 'Bearer 12345abcdef",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement() {
+                            {
+                                new OpenApiSecurityScheme
+                                {
+                                    Reference = new OpenApiReference
+                                            {
+                                                Type= ReferenceType.SecurityScheme,
+                                                Id = "Bearer"
+                                            },
+                                    Scheme = "Oauth2",
+                                    Name = "Bearer",
+                                    In= ParameterLocation.Header,
+                                },
+                                new List<string>()
+                            }
+                });
+
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployerPortal.API", Version = "v1" });
             });
         }
@@ -113,6 +157,8 @@ namespace EmployerPortal.API
 
             app.UseRouting();
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

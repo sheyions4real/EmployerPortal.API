@@ -1,6 +1,11 @@
 ﻿using EmployerPortal.API.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace EmployerPortal.API.Extensions
 {
@@ -17,5 +22,30 @@ namespace EmployerPortal.API.Extensions
             // use 
             // services.ConfigureIdentity(); to add the services identity core to the startup.cs class
         }
+
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration config)
+        {
+            var jwtSettings = config.GetSection("Jwt");
+            var jwtKey = Environment.GetEnvironmentVariable("KEY");
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.GetSection("Issuer").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                };
+            });
+        }
+
     }
 }
