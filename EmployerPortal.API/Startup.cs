@@ -94,6 +94,8 @@ namespace EmployerPortal.API
             // enable swagger documentation to use the JWT token
             AddSwaggerDoc(services);
 
+            // configure API Versioning. You can access different versions of the Endpoints or controller
+            services.ConfigureVersioning();
 
 
         }
@@ -141,10 +143,17 @@ namespace EmployerPortal.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger(c =>
+                {
+                    c.RouteTemplate = "/swagger/{documentName}/swagger.json";
+                });
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployerPortal.API v1"));
+            app.ConfigureExceptionHandler();
+
+           // app.UseSwagger();
+           // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployerPortal.API v1"));
 
 
             app.UseSerilogRequestLogging();

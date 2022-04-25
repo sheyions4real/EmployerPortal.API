@@ -5,32 +5,44 @@ using EmployerPortal.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EmployerPortal.API.Controllers
 {
 
-    // global to all methods
-    [ApiController]
-    [Route("api/[controller]")]
-    [ApiVersion("1.0")]
-    public class EmployerController : Controller
+    //version 2 of the API.
+    // this ew version uses the dbcontext to access data rather than the unitofwork
+    /// <summary>
+    /// This Version uses global exception handling
+    /// to access the api
+    /// use https://localhost:5001/api/v2/Employer  // using controller route
+    /// or https://localhost:5001/api/Employer?api-version=2.0
+    /// </summary>
+    //[Route("api/V2/[controller]")] // delcare it this way or use same route but [ApiVersion(2.0)]
+  
+    [Route("api/{v:apiversion}/[controller]")]  // local host/api/2.0/employerv2
+   // [Route("api/V2/[controller]")]  // local host/api/2.0/employerv2
+    [ApiVersion("2.0", Deprecated = true)] // use this if the route of verion 1 and 2 are thesame . // add Deprecated if this endpoint is deprecated
+    public class EmployerV2Controller : Controller
     {
+
+        // not save and not best practice
+        private DatabaseContext _context;
+
         private readonly IUnitOfWork _unitOfWork; // accessed with dependency injection via the constructor
-        private readonly ILogger<EmployerController> _logger;
+        private readonly ILogger<EmployerV2Controller> _logger;
         private readonly IMapper _mapper;
 
 
         // dependency injection
-        public EmployerController(IUnitOfWork unitOfWork, ILogger<EmployerController> logger, IMapper mapper)
+        public EmployerV2Controller(IUnitOfWork unitOfWork, ILogger<EmployerV2Controller> logger, IMapper mapper, DatabaseContext context)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
+            _context = context;
         }
 
 
@@ -41,7 +53,7 @@ namespace EmployerPortal.API.Controllers
 
 
 
-       // [Authorize]
+        // [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -54,18 +66,12 @@ namespace EmployerPortal.API.Controllers
            // throw new Exception();
 
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
-            try
-            {
+            
                 // var employers = await _unitOfWork.EmployerRepo.GetAll();
-                var employers = await _unitOfWork.EmployerRepo.GetAll();
-                var results = _mapper.Map<IList<EmployerDTO>>(employers);
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Something went wrong in the {nameof(GetEmployers)}");
-                return StatusCode(500, "Internal Server Error Please Try again later");
-            }
+               // var employers = await _context.Employers.FindAsync();
+               // var results = _mapper.Map<IList<EmployerDTO>>(employers);
+                return Ok(_context.Employers);
+           
         }
 
 
@@ -81,18 +87,12 @@ namespace EmployerPortal.API.Controllers
         public async Task<IActionResult> GetEmployersList([FromQuery] RequestParams param)
         {
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
-            try
-            {
+            
                 // var employers = await _unitOfWork.EmployerRepo.GetAll();
                 var employers = await _unitOfWork.EmployerRepo.GetAll(param);
                 var results = _mapper.Map<IList<EmployerDTO>>(employers);
                 return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Something went wrong in the {nameof(this.GetEmployersList)}");
-                return StatusCode(500, "Internal Server Error Please Try again later");
-            }
+           
         }
 
 
@@ -107,19 +107,14 @@ namespace EmployerPortal.API.Controllers
         // they are both Get methods actions but this accept Id
         public async Task<IActionResult> GetEmployer(int Id)
         {
-            try
-            {
+           
                 // the Get generic method receives an expression, we can includes the EmployerAllocation, Schedules and relationship managers
-                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees","Schedules","EmployerAllocations" }  );
+                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees", "Schedules", "EmployerAllocations" });
                 var result = _mapper.Map<EmployerDTO>(employer);
-                
+
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Something went wrong in the {nameof(GetEmployer)}");
-                return StatusCode(500, "Internal Server Error Please Try again later");
-            }
+            
+          
         }
 
 
@@ -129,7 +124,7 @@ namespace EmployerPortal.API.Controllers
         // Create new Employer by HttpPost
         [HttpPost]
         [Authorize]//(Roles = "Administrator")] // only Administrator can create Employer
-       // [ActionName(nameof(CreateEmployer))]
+                   // [ActionName(nameof(CreateEmployer))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -141,10 +136,9 @@ namespace EmployerPortal.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
-            {
+            
                 var employer = _mapper.Map<Employer>(employerDTO);
-                
+
                 await _unitOfWork.EmployerRepo.Insert(employer);
                 await _unitOfWork.Save();
 
@@ -154,19 +148,13 @@ namespace EmployerPortal.API.Controllers
 
                 var createdResource = employer;
                 var actionName = "GetEmployerByID";
-                var controllerName = nameof(EmployerController);
-                var routeValues = new { Id = employer.Id }; 
+               // var controllerName = nameof(EmployerV2Controller);
+                var routeValues = new { Id = employer.Id };
 
                 return CreatedAtAction(actionName, routeValues, employer);
                 //return Created(employer);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError(ex, $"Something Went Wrong in the {nameof(CreateEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(CreateEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
-            }
            
+
 
         }
 
@@ -185,23 +173,21 @@ namespace EmployerPortal.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
-            {
-
+           
                 var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                if(employer == null)
+                if (employer == null)
                 {
                     _logger.LogError($"Invalid Put Operation attempt in {nameof(UpdateEmployer)}");
                     return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
                 }
 
-                         _mapper.Map(employerDTO, employer);
+                _mapper.Map(employerDTO, employer);
 
-                       // var updateEmployer = _mapper.Map<Employer>(employerDTO);
+                // var updateEmployer = _mapper.Map<Employer>(employerDTO);
 
-                    _unitOfWork.EmployerRepo.Update(employer);
-                    await _unitOfWork.Save();
+                _unitOfWork.EmployerRepo.Update(employer);
+                await _unitOfWork.Save();
 
                 return NoContent();
 
@@ -210,13 +196,7 @@ namespace EmployerPortal.API.Controllers
                 // ensure the Get Employer HttpGet definition is labeled with the Action Name
 
                 //return Created(employer);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError(ex, $"Something Went Wrong in the {nameof(UpdateEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(UpdateEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
-            }
+          
 
         }
 
@@ -234,8 +214,7 @@ namespace EmployerPortal.API.Controllers
                 _logger.LogError($"Invalid Delete Request attempted in {nameof(DeleteEmployer)}");
                 return BadRequest("Invalid ID Parameter");
             }
-            try
-            {
+            
 
                 var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
@@ -250,20 +229,13 @@ namespace EmployerPortal.API.Controllers
 
                 return NoContent();
 
-            }catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Something Went Wrong in the {nameof(DeleteEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(DeleteEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
-            }
+           
         }
 
 
 
-       
 
 
 
-
-        }
     }
-
+}

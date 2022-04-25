@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployerPortal.API.Data
 {
@@ -13,7 +14,10 @@ namespace EmployerPortal.API.Data
         public string Email { get; set; }
         public string AgentCode { get; set; }
         public string BranchCode { get; set; }
+
+        [ForeignKey("States")]
         public string StateOfPosting { get; set; }
+        public State State { get; set; }
 
         public virtual IList<EmployerAllocation> EmployerAllocations { get; set; }
     }

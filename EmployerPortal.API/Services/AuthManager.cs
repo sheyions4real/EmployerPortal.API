@@ -43,6 +43,8 @@ namespace EmployerPortal.API.Services
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
+            Console.WriteLine(jwtSettings);
+
 
             var token = new JwtSecurityToken(
                 issuer: jwtSettings.GetSection("Issuer").Value,

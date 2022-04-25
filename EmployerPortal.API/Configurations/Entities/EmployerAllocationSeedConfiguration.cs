@@ -14,6 +14,7 @@ namespace EmployerPortal.API.Configurations.Entities
               new EmployerAllocation
               {
                   Id = 1,
+                  EmployerId = 1,
                   EmployerCode = "PR0000613584",
                   RelationshipManagerID = 1,
                   EmployerAddress = "266 Murtala Muhammed Way, Alagomeji Yaba",

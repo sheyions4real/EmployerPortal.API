@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployerPortal.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220421113722_IdentityCoreRolesSeeding")]
-    partial class IdentityCoreRolesSeeding
+    [Migration("20220422155925_ReinitializationOfDatabaseMigration")]
+    partial class ReinitializationOfDatabaseMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -130,7 +130,10 @@ namespace EmployerPortal.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("EmployerName")
                         .HasColumnType("nvarchar(max)");
@@ -162,6 +165,9 @@ namespace EmployerPortal.API.Migrations
                     b.Property<string>("Ssn")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StateCode")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("State_Of_Posting")
                         .HasColumnType("nvarchar(max)");
 
@@ -176,7 +182,9 @@ namespace EmployerPortal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployerCode");
+                    b.HasIndex("EmployerId");
+
+                    b.HasIndex("StateCode");
 
                     b.ToTable("Employees");
 
@@ -193,6 +201,7 @@ namespace EmployerPortal.API.Migrations
                             Date_Of_Birth = "1986-10-26",
                             Email = "sheyions4real@yahoo.co.uk",
                             EmployerCode = "PR0000613584",
+                            EmployerId = 1,
                             EmployerName = "OAK PENSIONS LIMITED",
                             Firstname = "Sheyi",
                             Gender = "M",
@@ -211,8 +220,10 @@ namespace EmployerPortal.API.Migrations
 
             modelBuilder.Entity("EmployerPortal.API.Data.Employer", b =>
                 {
-                    b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -235,19 +246,25 @@ namespace EmployerPortal.API.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmployerCode")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("EmployerName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Id")
+                    b.Property<int?>("IndustryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Industry")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("IndustryName")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Mobile_Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NatureOfBusiness")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sector")
@@ -256,55 +273,66 @@ namespace EmployerPortal.API.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("EmployerCode");
+                    b.Property<string>("StateCode")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployerCode")
+                        .IsUnique()
+                        .HasFilter("[EmployerCode] IS NOT NULL");
+
+                    b.HasIndex("IndustryName");
+
+                    b.HasIndex("StateCode");
 
                     b.ToTable("Employers");
 
                     b.HasData(
                         new
                         {
-                            EmployerCode = "PR0000613584",
+                            Id = 1,
                             Address = "15B OKO AWO STREET  VICTORIA ISLAND, LAGOS",
                             City = "LAGOS",
                             Contact_Officer_Name = "Akinwumi A.",
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "info@oakpensions.com",
+                            EmployerCode = "PR0000613584",
                             EmployerName = "OAK PENSIONS LIMITED",
-                            Id = 1,
-                            Industry = "Finance",
+                            IndustryId = 2,
                             Mobile_Phone = "07002255625",
                             Sector = "Private",
                             State = "LAGOS"
                         },
                         new
                         {
-                            EmployerCode = "PR0000041041",
+                            Id = 2,
                             Address = "PLOT 590 ZONE A.O NAIC HOUSE CBD",
                             City = "Abuja",
                             Contact_Officer_Name = "AYEKAME ELUKPO",
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "",
+                            EmployerCode = "PR0000041041",
                             EmployerName = "DUETHEL PRO SERVICES LIMITED",
-                            Id = 2,
-                            Industry = "Finance",
+                            IndustryId = 1,
                             Mobile_Phone = "08126696169",
                             Sector = "Private",
                             State = "FCT"
                         },
                         new
                         {
-                            EmployerCode = "PR0000041042",
+                            Id = 3,
                             Address = "16 YASHIM DOGARA CRESCENT DAWAKI ABUJA",
                             City = "Abuja",
                             Contact_Officer_Name = "",
                             DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "",
+                            EmployerCode = "PR0000041042",
                             EmployerName = "WINCREST CONSULT LIMITED",
-                            Id = 3,
-                            Industry = "Finance",
+                            IndustryId = 1,
                             Mobile_Phone = "08163313858",
                             Sector = "Private",
                             State = "FCT"
@@ -334,13 +362,16 @@ namespace EmployerPortal.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerContact_Officer_Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerEmail")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("EmployerMobile_Phone")
                         .HasColumnType("nvarchar(max)");
@@ -362,7 +393,7 @@ namespace EmployerPortal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployerCode");
+                    b.HasIndex("EmployerId");
 
                     b.HasIndex("RelationshipManagerID");
 
@@ -379,11 +410,63 @@ namespace EmployerPortal.API.Migrations
                             EmployerCode = "PR0000613584",
                             EmployerContact_Officer_Name = "Henry Christopher",
                             EmployerEmail = "info@oakpensions.com",
+                            EmployerId = 1,
                             EmployerMobile_Phone = "07002255625",
                             EmployerState = "LA",
                             Officer_Position = "Head, HR",
                             RelationshipManagerID = 1,
                             State_Of_Posting = "LA"
+                        });
+                });
+
+            modelBuilder.Entity("EmployerPortal.API.Data.Industry", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Industry");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Petroleum Products Sales and Services",
+                            Code = "",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Petroleum Products Sales and Services",
+                            Id = 0
+                        },
+                        new
+                        {
+                            Name = "Others",
+                            Code = "",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Other services not listed",
+                            Id = 0
                         });
                 });
 
@@ -413,7 +496,10 @@ namespace EmployerPortal.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -432,7 +518,7 @@ namespace EmployerPortal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployerCode");
+                    b.HasIndex("EmployerId");
 
                     b.ToTable("NewPaymentSchedules");
                 });
@@ -462,8 +548,8 @@ namespace EmployerPortal.API.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Firstname")
                         .HasColumnType("nvarchar(max)");
@@ -480,6 +566,9 @@ namespace EmployerPortal.API.Migrations
                     b.Property<string>("Othernames")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StateCode")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("StateOfPosting")
                         .HasColumnType("nvarchar(max)");
 
@@ -491,7 +580,9 @@ namespace EmployerPortal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployerCode");
+                    b.HasIndex("EmployerId");
+
+                    b.HasIndex("StateCode");
 
                     b.ToTable("RelationshipManagers");
 
@@ -543,7 +634,10 @@ namespace EmployerPortal.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployerCode")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("IDNO")
                         .HasColumnType("int");
@@ -565,7 +659,7 @@ namespace EmployerPortal.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployerCode");
+                    b.HasIndex("EmployerId");
 
                     b.ToTable("Schedules");
 
@@ -580,11 +674,418 @@ namespace EmployerPortal.API.Migrations
                             DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "REM  N-10042361295/PR0000613584/NIP0341903290-000000364600 91004236129",
                             EmployerCode = "PR0000613584",
+                            EmployerId = 1,
                             IDNO = 200734,
                             RefNo = "S50268032-2",
                             Refund_Amount = 0.0,
                             StatusCode = "R",
                             ValueDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified).AddTicks(1987)
+                        });
+                });
+
+            modelBuilder.Entity("EmployerPortal.API.Data.State", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZoneCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("States");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "AB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ABIA",
+                            Id = 0,
+                            Region = "SOUTH EAST",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "AD",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ADAMAWA",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NE"
+                        },
+                        new
+                        {
+                            Code = "AK",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "AKWA IBOM",
+                            Id = 0,
+                            Region = "AKWA IBOM",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "AN",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ANAMBRA",
+                            Id = 0,
+                            Region = "SOUTH EAST",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "BA",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "BAUCH",
+                            Id = 0,
+                            Region = "KADUNA",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "BE",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "BENUE",
+                            Id = 0,
+                            Region = "BENUE",
+                            ZoneCode = "NC"
+                        },
+                        new
+                        {
+                            Code = "BO",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "BORNO",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NE"
+                        },
+                        new
+                        {
+                            Code = "BY",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "BAYELSA",
+                            Id = 0,
+                            Region = "RIVERS",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "CR",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "CROSS RIVER",
+                            Id = 0,
+                            Region = "AKWA IBOM",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "DT",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "DELTA",
+                            Id = 0,
+                            Region = "DELTA",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "EB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "EBONYI",
+                            Id = 0,
+                            Region = "SOUTH EAST",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "ED",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "EDO",
+                            Id = 0,
+                            Region = "DELTA",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "EK",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "EKITI",
+                            Id = 0,
+                            Region = "EKITI",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "EN",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ENUGU",
+                            Id = 0,
+                            Region = "SOUTH EAST",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "FC",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "FED. CAPITAL TERITORY",
+                            Id = 0,
+                            Region = "ABUJA",
+                            ZoneCode = "FC"
+                        },
+                        new
+                        {
+                            Code = "GB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "GOMBE",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "IM",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "IMO",
+                            Id = 0,
+                            Region = "SOUTH EAST",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "JG",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "JIGAWA",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "KB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "KEBBI",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "KD",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ABIA",
+                            Id = 0,
+                            Region = "KADUNA",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "KG",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ABIA",
+                            Id = 0,
+                            Region = "BENUE",
+                            ZoneCode = "NV"
+                        },
+                        new
+                        {
+                            Code = "KN",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "KANO",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "KT",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "KATSINA",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "KW",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "KWARA",
+                            Id = 0,
+                            Region = "OSUN",
+                            ZoneCode = "NC"
+                        },
+                        new
+                        {
+                            Code = "LA",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "LAGOS",
+                            Id = 0,
+                            Region = "LAGOS",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "NG",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "NIGER",
+                            Id = 0,
+                            Region = "BENUE",
+                            ZoneCode = "NE"
+                        },
+                        new
+                        {
+                            Code = "NR",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "NASARAWA",
+                            Id = 0,
+                            Region = "BENUE",
+                            ZoneCode = "NC"
+                        },
+                        new
+                        {
+                            Code = "OD",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ONDO",
+                            Id = 0,
+                            Region = "EKITI",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "OG",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "OGUN",
+                            Id = 0,
+                            Region = "OGUN",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "OS",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "OSUN",
+                            Id = 0,
+                            Region = "OSUN",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "OY",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "OYO",
+                            Id = 0,
+                            Region = "OYO",
+                            ZoneCode = "SW"
+                        },
+                        new
+                        {
+                            Code = "PL",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "PLATEAU",
+                            Id = 0,
+                            Region = "KADUNA",
+                            ZoneCode = "NC"
+                        },
+                        new
+                        {
+                            Code = "RV",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "RIVERS",
+                            Id = 0,
+                            Region = "RIVERS",
+                            ZoneCode = "SS"
+                        },
+                        new
+                        {
+                            Code = "SO",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "SOKOTO",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NE"
+                        },
+                        new
+                        {
+                            Code = "TB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "TARABA",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "SE"
+                        },
+                        new
+                        {
+                            Code = "YB",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "YOBE",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NW"
+                        },
+                        new
+                        {
+                            Code = "ZA",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateModified = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "ZAMFARA",
+                            Id = 0,
+                            Region = "KANO",
+                            ZoneCode = "NE"
                         });
                 });
 
@@ -617,29 +1118,29 @@ namespace EmployerPortal.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "44b0d967-4baf-4090-9a68-5bd2ebff324e",
-                            ConcurrencyStamp = "24017a9c-26bf-4512-97c3-7eea4b40c1e3",
+                            Id = "5df1a3ae-ebcd-48a2-a9e0-88734070b9e4",
+                            ConcurrencyStamp = "1dc05e1d-c041-42ee-93e2-241c13eba7fb",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "383b257b-8f92-415b-9496-099f28b264f1",
-                            ConcurrencyStamp = "f269852d-2d17-49d7-a328-308ea619aafd",
+                            Id = "21fd5fa5-23e7-4312-b606-2435b0a51e25",
+                            ConcurrencyStamp = "c993a3e2-bbcf-4d43-b253-564f50f7a0a3",
                             Name = "Employer",
                             NormalizedName = "EMPLOYER"
                         },
                         new
                         {
-                            Id = "04465d65-25e0-4e43-8f55-aa1438d8a031",
-                            ConcurrencyStamp = "81db6da6-48a1-4c1f-8a0e-9dc5b0eaf18c",
+                            Id = "a0843563-4df6-4b92-9630-e541f2d0a895",
+                            ConcurrencyStamp = "5fc2c417-f8fc-48a8-b28e-b0dc2366e835",
                             Name = "RelationshipManager",
                             NormalizedName = "RELATIONSHIP MANAGER"
                         },
                         new
                         {
-                            Id = "315f2899-26e5-444f-83e8-6669bea91367",
-                            ConcurrencyStamp = "7b3537a8-ffc9-4c48-8e9a-78da180bd383",
+                            Id = "35eb65d0-a88c-4018-9195-95d6f15f4b84",
+                            ConcurrencyStamp = "69226fc5-d032-4e16-b74c-b366bae76d5c",
                             Name = "Supervisor",
                             NormalizedName = "SUPERVISOR"
                         });
@@ -753,16 +1254,39 @@ namespace EmployerPortal.API.Migrations
                 {
                     b.HasOne("EmployerPortal.API.Data.Employer", "Employer")
                         .WithMany("Employees")
-                        .HasForeignKey("EmployerCode");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployerPortal.API.Data.State", "State")
+                        .WithMany("Employees")
+                        .HasForeignKey("StateCode");
 
                     b.Navigation("Employer");
+
+                    b.Navigation("State");
+                });
+
+            modelBuilder.Entity("EmployerPortal.API.Data.Employer", b =>
+                {
+                    b.HasOne("EmployerPortal.API.Data.Industry", "Industry")
+                        .WithMany("Employees")
+                        .HasForeignKey("IndustryName");
+
+                    b.HasOne("EmployerPortal.API.Data.State", null)
+                        .WithMany("Employers")
+                        .HasForeignKey("StateCode");
+
+                    b.Navigation("Industry");
                 });
 
             modelBuilder.Entity("EmployerPortal.API.Data.EmployerAllocation", b =>
                 {
                     b.HasOne("EmployerPortal.API.Data.Employer", "Employer")
                         .WithMany("EmployerAllocations")
-                        .HasForeignKey("EmployerCode");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("EmployerPortal.API.Data.RelationshipManager", "RelationshipManager")
                         .WithMany("EmployerAllocations")
@@ -779,7 +1303,9 @@ namespace EmployerPortal.API.Migrations
                 {
                     b.HasOne("EmployerPortal.API.Data.Employer", "Employer")
                         .WithMany("NewPaymentSchedules")
-                        .HasForeignKey("EmployerCode");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employer");
                 });
@@ -788,14 +1314,22 @@ namespace EmployerPortal.API.Migrations
                 {
                     b.HasOne("EmployerPortal.API.Data.Employer", null)
                         .WithMany("RelationshipManagers")
-                        .HasForeignKey("EmployerCode");
+                        .HasForeignKey("EmployerId");
+
+                    b.HasOne("EmployerPortal.API.Data.State", "State")
+                        .WithMany("RelationshipManagers")
+                        .HasForeignKey("StateCode");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("EmployerPortal.API.Data.Schedule", b =>
                 {
                     b.HasOne("EmployerPortal.API.Data.Employer", "Employer")
                         .WithMany("Schedules")
-                        .HasForeignKey("EmployerCode");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employer");
                 });
@@ -864,9 +1398,23 @@ namespace EmployerPortal.API.Migrations
                     b.Navigation("Schedules");
                 });
 
+            modelBuilder.Entity("EmployerPortal.API.Data.Industry", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
             modelBuilder.Entity("EmployerPortal.API.Data.RelationshipManager", b =>
                 {
                     b.Navigation("EmployerAllocations");
+                });
+
+            modelBuilder.Entity("EmployerPortal.API.Data.State", b =>
+                {
+                    b.Navigation("Employees");
+
+                    b.Navigation("Employers");
+
+                    b.Navigation("RelationshipManagers");
                 });
 #pragma warning restore 612, 618
         }

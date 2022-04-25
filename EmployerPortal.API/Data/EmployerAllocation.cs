@@ -5,11 +5,10 @@ namespace EmployerPortal.API.Data
 {
     public class EmployerAllocation : BaseIdentity
     {
-        [ForeignKey(nameof(Employer))]
-        public string EmployerCode { get; set; }
+       
+        public int EmployerId { get; set; }
         public Employer Employer { get; set; }
-
-
+        public string EmployerCode { get; set; }
 
         public RelationshipManager RelationshipManager { get; set; }
         public int RelationshipManagerID { get; set; }
@@ -20,6 +19,8 @@ namespace EmployerPortal.API.Data
         public string EmployerEmail { get; set; }
         public string EmployerContact_Officer_Name { get; set; }
         public string Officer_Position { get; set; }
+
+        [ForeignKey("States")]
         public string State_Of_Posting { get; set; }
 
   

@@ -5,11 +5,12 @@ namespace EmployerPortal.API.Data
 {
     public class Feedback : BaseIdentity
     {
-       
 
-        [ForeignKey(nameof(Employer))]
-        public string EmployerCode { get; set; }
+
+        public int EmployerId { get; set; }
         public Employer Employer { get; set; }
+        public string EmployerCode { get; set; }
+ 
 
 
         public string Title { get; set; }

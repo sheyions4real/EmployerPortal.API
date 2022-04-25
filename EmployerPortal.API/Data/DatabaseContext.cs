@@ -25,7 +25,20 @@ namespace EmployerPortal.API.Data
             modelBuilder.ApplyConfiguration(new RelationshipManagerSeedConfiguration());
             modelBuilder.ApplyConfiguration(new EmployerAllocationSeedConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleSeedConfiguration());
+            modelBuilder.ApplyConfiguration(new IndustrySeedConfiguration());
+            modelBuilder.ApplyConfiguration(new StateSeedConfiguration());
 
+
+            //modelBuilder.Entity<Employer>()
+            // .HasKey(code => code.Id);
+
+            //// declare EmployerCode as unique key
+            modelBuilder.Entity<Employer>()
+                .HasIndex(code => code.EmployerCode)
+                .IsUnique();
+                
+                
+     
 
 
 
@@ -185,9 +198,8 @@ namespace EmployerPortal.API.Data
         public DbSet<EmployerAllocation> EmployerAllocations { get; set; }
         public DbSet<RelationshipManager> RelationshipManagers { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-
         public DbSet<NewPaymentSchedule> NewPaymentSchedules { get; set; }
-
-
+        public DbSet<Industry> Industry { get; set; }
+        public DbSet<State> States { get; set; }
     }
 }

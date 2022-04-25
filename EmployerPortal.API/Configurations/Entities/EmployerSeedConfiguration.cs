@@ -22,7 +22,7 @@ namespace EmployerPortal.API.Configurations.Entities
                     Email = "info@oakpensions.com",
                     Contact_Officer_Name = "Akinwumi A.",
                     Sector = "Private",
-                    Industry = "Finance"
+                    IndustryId = 2
                 },
                 new Employer
                 {
@@ -36,7 +36,7 @@ namespace EmployerPortal.API.Configurations.Entities
                     Email = "",
                     Contact_Officer_Name = "AYEKAME ELUKPO",
                     Sector = "Private",
-                    Industry = "Finance"
+                    IndustryId = 1
 
 
                 },
@@ -52,7 +52,7 @@ namespace EmployerPortal.API.Configurations.Entities
                     Email = "",
                     Contact_Officer_Name = "",
                     Sector = "Private",
-                    Industry = "Finance"
+                    IndustryId = 1
                 }
 
 

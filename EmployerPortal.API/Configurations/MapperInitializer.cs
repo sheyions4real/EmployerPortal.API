@@ -10,6 +10,12 @@ namespace EmployerPortal.API.Configurations
         public MapperInitializer()
         {
             CreateMap<Employer, EmployerDTO>().ReverseMap();
+            CreateMap<CreateEmployer, Employer>().ReverseMap();
+
+
+            CreateMap<CreateEmployer, CreateEmployerDTO>().ReverseMap();
+
+
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
             CreateMap<EmployerAllocation, EmployerAllocationDTO>().ReverseMap();
             CreateMap<Schedule, ScheduleDTO>().ReverseMap();
@@ -17,6 +23,8 @@ namespace EmployerPortal.API.Configurations
             CreateMap<NewPaymentSchedule, NewPaymentScheduleDTO>().ReverseMap();
             CreateMap<UserDTO, ApiUser>().ReverseMap();
             CreateMap<LoginUserDTO, ApiUser>().ReverseMap();
+            CreateMap<StateDTO, State>().ReverseMap();
+            CreateMap<IndustryDTO, Industry>().ReverseMap();
 
 
             CreateMap<Employer, CreateEmployerDTO>().ReverseMap();

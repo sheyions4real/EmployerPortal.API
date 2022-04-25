@@ -18,6 +18,7 @@ namespace EmployerPortal.API.Configurations.Entities
                         Id = 1,
                         IDNO = 200734,
                         EmployerCode = "PR0000613584",
+                        EmployerId = 1,
                         RefNo = "S50268032-2",
                         Amount = 2021556.46,
                         Amount_Processed = 0.00,

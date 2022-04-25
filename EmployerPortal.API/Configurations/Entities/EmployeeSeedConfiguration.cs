@@ -25,6 +25,7 @@ namespace EmployerPortal.API.Configurations.Entities
                       Email = "sheyions4real@yahoo.co.uk",
                       EmployerName = "OAK PENSIONS LIMITED",
                       EmployerCode = "PR0000613584",
+                      EmployerId = 1,
                       Date_Employed = "2012-04-01",
                       Date_Created = "2012-04-01",
                       Upload_Date = "2012-04-01",

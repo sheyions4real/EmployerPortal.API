@@ -16,8 +16,10 @@ namespace EmployerPortal.API.Data
         public string Email { get; set; }
         public string EmployerName { get; set; }
 
-        [ForeignKey(nameof(Employer))]
+        
         public string EmployerCode { get; set; }
+
+        public int EmployerId { get; set; }
         public Employer Employer { get; set; }
 
         public string Date_Employed { get; set; }
@@ -25,7 +27,11 @@ namespace EmployerPortal.API.Data
         public string Upload_Date { get; set; }
         public string Agent_Code { get; set; }
         public string Scheme_Id { get; set; }
+        [ForeignKey("States")]
         public string State_Of_Posting { get; set; }
+        public State State { get; set; }
+
+
         public string Client_Status { get; set; }
         public string Pin_Invalid { get; set; }
 

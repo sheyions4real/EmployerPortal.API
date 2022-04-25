@@ -5,9 +5,10 @@ namespace EmployerPortal.API.Data
 {
     public class NewPaymentSchedule : BaseIdentity
     {
-        [ForeignKey(nameof(Employer))]
-        public string EmployerCode { get; set; }
+        public int EmployerId { get; set; }
         public Employer Employer { get; set; }
+        public string EmployerCode { get; set; }
+       
 
 
 

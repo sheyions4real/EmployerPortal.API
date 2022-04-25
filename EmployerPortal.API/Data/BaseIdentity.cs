@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployerPortal.API.Data
 {
     public class BaseIdentity
     {
-
+       
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; } // automatically will be the identity column
           public string CreatedBy { get; set; }
         public DateTime DateCreated { get; set; }

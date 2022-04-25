@@ -10,12 +10,12 @@ namespace EmployerPortal.API.Repository
 
         private readonly DatabaseContext _dbContext;
 
-        private IGenericRepository<Employer> _employers;
-        private IGenericRepository<Employee> _employees;
-        private IGenericRepository<Schedule> _schedules;
-        private IGenericRepository<RelationshipManager> _relationshipManagers;
-        private IGenericRepository<EmployerAllocation> _employerAllocations;
-        private IGenericRepository<NewPaymentSchedule> _newPaymentSchedules;
+        private readonly IGenericRepository<Employer> _employers;
+        private readonly IGenericRepository<Employee> _employees;
+        private readonly IGenericRepository<Schedule> _schedules;
+        private readonly IGenericRepository<RelationshipManager> _relationshipManagers;
+        private readonly IGenericRepository<EmployerAllocation> _employerAllocations;
+        private readonly IGenericRepository<NewPaymentSchedule> _newPaymentSchedules;
 
 
 

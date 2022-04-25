@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EmployerPortal.API.Models
 {
@@ -9,12 +10,15 @@ namespace EmployerPortal.API.Models
         public string EmployerName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+
+        [Required]
         public string State { get; set; }
         public string Mobile_Phone { get; set; }
         public string Email { get; set; }
         public string Contact_Officer_Name { get; set; }
         public string Sector { get; set; }
-        public string Industry { get; set; }
+        public int? IndustryId { get; set; }
+        public string NatureOfBusiness { get; set; }
     }
 
 
@@ -27,6 +31,8 @@ namespace EmployerPortal.API.Models
         public string ModifiedBy { get; set; }
         public DateTime DateModified { get; set; }
 
+
+        public IndustryDTO Industry { get; set; }
 
         public virtual IList<EmployeeDTO> Employees { get; set; }
         public virtual IList<ScheduleDTO> Schedules { get; set; }

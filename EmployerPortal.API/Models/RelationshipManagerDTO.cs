@@ -15,6 +15,7 @@ namespace EmployerPortal.API.Models
         public string AgentCode { get; set; }
         public string BranchCode { get; set; }
         public string StateOfPosting { get; set; }
+        public StateDTO State { get; set; }
     }
 
     public class RelationshipManagerDTO : CreateRelationshipManagerDTO

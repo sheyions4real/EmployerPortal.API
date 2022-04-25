@@ -8,7 +8,8 @@ namespace EmployerPortal.API.Data
         public int IDNO { get; set; }
 
 
-        [ForeignKey(nameof(Employer))]
+       
+        public int EmployerId { get; set; }
         public string EmployerCode { get; set; }
         public Employer Employer { get; set; }
 

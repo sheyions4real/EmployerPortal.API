@@ -1,8 +1,10 @@
-﻿using System;
+﻿using EmployerPortal.API.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace EmployerPortal.API.IRepository
 {
@@ -17,6 +19,14 @@ namespace EmployerPortal.API.IRepository
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             List<string> includes = null
             );
+
+
+
+        // get all records with paging and no filtering
+        Task<IPagedList<T>> GetAll(
+           RequestParams requestParams, List<string> includes=null );
+
+
 
 
         // returns one record
