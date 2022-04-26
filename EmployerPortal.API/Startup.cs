@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using EmployerPortal.API.Configurations;
 using EmployerPortal.API.Data;
 using EmployerPortal.API.Extensions;
@@ -48,8 +49,36 @@ namespace EmployerPortal.API
             );
 
 
+            // for configuration of throtting to avoid Denial of Service
+            services.AddMemoryCache();
+            // configure throtting from service extension
+             services.ConfigureRateLimiting();
+            services.AddHttpContextAccessor();
 
-            services.AddControllers();
+            // inject counter and rules stores
+            services.AddInMemoryRateLimiting();
+            
+            //load general configuration from appsettings.json if setting configuration from the app.json file
+           // services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
+
+            //load client rules from appsettings.json
+            //services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
+
+           
+
+
+            // enable cacheing
+            //services.AddResponseCaching();
+            services.ConfigureHttpCacheHeaders();
+
+
+            // IdentityUser
+            // add identity core to our services API
+            services.AddAuthentication();
+            services.ConfigureIdentity();    // this is coming from our custom ServicesExtensions class with configuration
+            services.ConfigureJWT(Configuration);    // configure the JWT for the application
+
+           
 
             services.AddCors(policy =>
             {
@@ -61,6 +90,7 @@ namespace EmployerPortal.API
                 );
             });
 
+           // services.ConfigureAutoMapper();
             services.AddAutoMapper(typeof(MapperInitializer));
 
 
@@ -69,20 +99,8 @@ namespace EmployerPortal.API
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IAuthManager, AuthManager>();   // used AddScoped because one will served one for the entire application
 
-            // to resolve cyclic dependency issue
-            // install Microsoft.aspnetcore.mvc.Newtonsoft package
-            // this is specifying that ignore where u see the cyclic dependency issue
-
-            services.AddControllers()
-                .AddNewtonsoftJson(
-                op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-             );
-
-            // IdentityUser
-            // add identity core to our services API
-            services.AddAuthentication();
-            services.ConfigureIdentity();    // this is coming from our custom ServicesExtensions class with configuration
-            services.ConfigureJWT(Configuration);    // configure the JWT for the application
+            // configuration (resolvers, counter key builders)
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 
             //// the default swagger doc
@@ -92,12 +110,34 @@ namespace EmployerPortal.API
             //});
 
             // enable swagger documentation to use the JWT token
-            AddSwaggerDoc(services);
+            // AddSwaggerDoc(services);
+            services.ConfigureSwaggerDoc();
+           
 
+            // to resolve cyclic dependency issue
+            // install Microsoft.aspnetcore.mvc.Newtonsoft package
+            // this is specifying that ignore where u see the cyclic dependency issue
+
+            services.AddControllers(
+                    //// add global response caching
+                    //config =>
+                    //{
+                    //    config.CacheProfiles.Add("120SecondsDuration", new CacheProfile
+                    //    {
+                    //        Duration = 20
+                    //    });
+                    //}
+                )
+                .AddNewtonsoftJson(
+                op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+             );
             // configure API Versioning. You can access different versions of the Endpoints or controller
             services.ConfigureVersioning();
 
 
+
+
+            
         }
 
         // add securitydefinition and requirement configuration to the swagger doc to enable JWT bearer authentication
@@ -140,6 +180,9 @@ namespace EmployerPortal.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseIpRateLimiting();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -147,10 +190,27 @@ namespace EmployerPortal.API
                 {
                     c.RouteTemplate = "/swagger/{documentName}/swagger.json";
                 });
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+                app.UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employer.API v1");
+                   //string swaggerJsonBasePath = string.IsNullOrWhiteSpace(c.RoutePrefix) ? "." : "..";
+                   // c.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/v1/swagger.json", "Employer.API v1");
+                });
             }
 
             app.ConfigureExceptionHandler();
+
+            app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
+
+            app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
+           
+
+
+            app.UseRouting();
+           
+            app.UseAuthentication();
+            app.UseAuthorization();
 
            // app.UseSwagger();
            // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployerPortal.API v1"));
@@ -160,15 +220,10 @@ namespace EmployerPortal.API
             app.UseStaticFiles();
 
 
-            app.UseHttpsRedirection();
-            app.UseCors("AllowAll");
+          
 
 
-            app.UseRouting();
 
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

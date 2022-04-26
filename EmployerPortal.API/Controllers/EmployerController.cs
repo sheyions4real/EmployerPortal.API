@@ -2,6 +2,7 @@
 using EmployerPortal.API.Data;
 using EmployerPortal.API.IRepository;
 using EmployerPortal.API.Models;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +42,16 @@ namespace EmployerPortal.API.Controllers
 
 
 
-       // [Authorize]
+        [Authorize]
+        //[ResponseCache(Duration =60)] // --- Local to this method -- add caching attribute in the response header primarily
+        //[ResponseCache(CacheProfileName = "120SecondsDuration")] // --- Global // this profile has been configured globally in the start up.cs file
+        
+        //setting custom global cacheing proporeties to override the global in the serviceExtension
+        //[HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge= 60)]
+        //[HttpCacheValidation(MustRevalidate =false)]
+
         [HttpGet]
+        [ActionName("GetEmployers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // since the route is [Route("api/[controller]")] when access using a GET method type it will hit this action automatically
@@ -75,10 +84,11 @@ namespace EmployerPortal.API.Controllers
         // since the route is [Route("api/[controller]")] when access using a GET method type it will hit this action automatically
         // get all employers
         [Authorize]
+        [ResponseCache(Duration =60)]
         [HttpGet("GetEmployersList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEmployersList([FromQuery] RequestParams param)
+        public async Task<IActionResult> GetEmployers([FromQuery] RequestParams param)
         {
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
             try
@@ -90,7 +100,7 @@ namespace EmployerPortal.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Something went wrong in the {nameof(this.GetEmployersList)}");
+                _logger.LogError(ex, $"Something went wrong in the {nameof(this.GetEmployers)}");
                 return StatusCode(500, "Internal Server Error Please Try again later");
             }
         }
