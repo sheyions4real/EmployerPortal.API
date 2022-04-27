@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployerPortal.API", "EmployerPortal.API\EmployerPortal.API.csproj", "{3C8B3A79-B2A8-4687-9918-DF1F06D8D811}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployerPortal.API", "EmployerPortal.API\EmployerPortal.API.csproj", "{3C8B3A79-B2A8-4687-9918-DF1F06D8D811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployerPortal.Data", "EmployerPortal.Data\EmployerPortal.Data.csproj", "{D1F2FA50-566C-47E2-829D-2DE7B941B0A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployerPortal.Core", "EmployerPortal.Core\EmployerPortal.Core.csproj", "{D8762AC2-D61E-48D5-A513-71EC0585E204}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{3C8B3A79-B2A8-4687-9918-DF1F06D8D811}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C8B3A79-B2A8-4687-9918-DF1F06D8D811}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C8B3A79-B2A8-4687-9918-DF1F06D8D811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1F2FA50-566C-47E2-829D-2DE7B941B0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1F2FA50-566C-47E2-829D-2DE7B941B0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1F2FA50-566C-47E2-829D-2DE7B941B0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1F2FA50-566C-47E2-829D-2DE7B941B0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8762AC2-D61E-48D5-A513-71EC0585E204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8762AC2-D61E-48D5-A513-71EC0585E204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8762AC2-D61E-48D5-A513-71EC0585E204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8762AC2-D61E-48D5-A513-71EC0585E204}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

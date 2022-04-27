@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using EmployerPortal.API.Data;
-using EmployerPortal.API.IRepository;
-using EmployerPortal.API.Models;
-using Marvin.Cache.Headers;
+using EmployerPortal.Core.Models;
+using EmployerPortal.Core.DTOs;
+using EmployerPortal.Core.IRepository;
+using EmployerPortal.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace EmployerPortal.API.Controllers
         [Authorize]
         //[ResponseCache(Duration =60)] // --- Local to this method -- add caching attribute in the response header primarily
         //[ResponseCache(CacheProfileName = "120SecondsDuration")] // --- Global // this profile has been configured globally in the start up.cs file
-        
+
         //setting custom global cacheing proporeties to override the global in the serviceExtension
         //[HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge= 60)]
         //[HttpCacheValidation(MustRevalidate =false)]
@@ -60,7 +59,7 @@ namespace EmployerPortal.API.Controllers
         {
 
             //// manually throw new exception to test the Global Exception handler
-           // throw new Exception();
+            // throw new Exception();
 
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
             try
@@ -84,7 +83,7 @@ namespace EmployerPortal.API.Controllers
         // since the route is [Route("api/[controller]")] when access using a GET method type it will hit this action automatically
         // get all employers
         [Authorize]
-        [ResponseCache(Duration =60)]
+        [ResponseCache(Duration = 60)]
         [HttpGet("GetEmployersList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -120,9 +119,9 @@ namespace EmployerPortal.API.Controllers
             try
             {
                 // the Get generic method receives an expression, we can includes the EmployerAllocation, Schedules and relationship managers
-                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees","Schedules","EmployerAllocations" }  );
+                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees", "Schedules", "EmployerAllocations" });
                 var result = _mapper.Map<EmployerDTO>(employer);
-                
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -139,7 +138,7 @@ namespace EmployerPortal.API.Controllers
         // Create new Employer by HttpPost
         [HttpPost]
         [Authorize]//(Roles = "Administrator")] // only Administrator can create Employer
-       // [ActionName(nameof(CreateEmployer))]
+                   // [ActionName(nameof(CreateEmployer))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -154,7 +153,7 @@ namespace EmployerPortal.API.Controllers
             try
             {
                 var employer = _mapper.Map<Employer>(employerDTO);
-                
+
                 await _unitOfWork.EmployerRepo.Insert(employer);
                 await _unitOfWork.Save();
 
@@ -164,8 +163,8 @@ namespace EmployerPortal.API.Controllers
 
                 var createdResource = employer;
                 var actionName = "GetEmployerByID";
-                var controllerName = nameof(EmployerController);
-                var routeValues = new { Id = employer.Id }; 
+                //var controllerName = nameof(EmployerController);
+                var routeValues = new { employer.Id };
 
                 return CreatedAtAction(actionName, routeValues, employer);
                 //return Created(employer);
@@ -174,9 +173,9 @@ namespace EmployerPortal.API.Controllers
             {
 
                 _logger.LogError(ex, $"Something Went Wrong in the {nameof(CreateEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(CreateEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
+                return Problem($"Something Went Wrong in the {nameof(CreateEmployer)} Error {ex.Message}", statusCode: 500);
             }
-           
+
 
         }
 
@@ -200,18 +199,18 @@ namespace EmployerPortal.API.Controllers
 
                 var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                if(employer == null)
+                if (employer == null)
                 {
                     _logger.LogError($"Invalid Put Operation attempt in {nameof(UpdateEmployer)}");
                     return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
                 }
 
-                         _mapper.Map(employerDTO, employer);
+                _mapper.Map(employerDTO, employer);
 
-                       // var updateEmployer = _mapper.Map<Employer>(employerDTO);
+                // var updateEmployer = _mapper.Map<Employer>(employerDTO);
 
-                    _unitOfWork.EmployerRepo.Update(employer);
-                    await _unitOfWork.Save();
+                _unitOfWork.EmployerRepo.Update(employer);
+                await _unitOfWork.Save();
 
                 return NoContent();
 
@@ -225,7 +224,7 @@ namespace EmployerPortal.API.Controllers
             {
 
                 _logger.LogError(ex, $"Something Went Wrong in the {nameof(UpdateEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(UpdateEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
+                return Problem($"Something Went Wrong in the {nameof(UpdateEmployer)} Error {ex.Message}", statusCode: 500);
             }
 
         }
@@ -260,20 +259,21 @@ namespace EmployerPortal.API.Controllers
 
                 return NoContent();
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Something Went Wrong in the {nameof(DeleteEmployer)}");
-                return Problem($"Something Went Wrong in the {nameof(DeleteEmployer)}\nError{ex.Message.ToString()}", statusCode: 500);
+                return Problem($"Something Went Wrong in the {nameof(DeleteEmployer)} Error {ex.Message}", statusCode: 500);
             }
         }
 
 
 
-       
 
 
 
 
-        }
+
     }
+}
 

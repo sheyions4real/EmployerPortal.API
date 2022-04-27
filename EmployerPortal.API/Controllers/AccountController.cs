@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using EmployerPortal.API.Data;
-using EmployerPortal.API.Models;
-using EmployerPortal.API.Services;
+using EmployerPortal.Core.DTOs;
+using EmployerPortal.Core.Services;
+using EmployerPortal.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@ namespace EmployerPortal.API.Controllers
     {
 
         private readonly UserManager<ApiUser> _userManager; // User manager comes from IdentiyCore
-       // private readonly SignInManager<ApiUser> _signInManager; //// User manager comes from IdentiyCore
+                                                            // private readonly SignInManager<ApiUser> _signInManager; //// User manager comes from IdentiyCore
         private readonly ILogger<AccountController> _logger;
         private readonly IMapper _mapper;
         private readonly IAuthManager _authManager;
@@ -26,7 +26,7 @@ namespace EmployerPortal.API.Controllers
         public AccountController(UserManager<ApiUser> userManager,
           //  SignInManager<ApiUser> signInManager, 
           IAuthManager authManager,
-            ILogger<AccountController> logger, 
+            ILogger<AccountController> logger,
             IMapper mapper)
         {
             _userManager = userManager;
@@ -81,13 +81,13 @@ namespace EmployerPortal.API.Controllers
             {
                 _logger.LogError(ex, $"Something Went Wrong in the {nameof(Register)}");
                 return Problem($"Something Went Wrong in the {nameof(Register)}", statusCode: 500);
-                
+
             }
         }
 
         // Login authentication to generate token
         // All controller actions here
-       
+
         [HttpPost]
         [Route("Login")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]

@@ -39,4 +39,9 @@
     <PackageReference Include="X.PagedList.Mvc.Core" Version="8.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EmployerPortal.Core\EmployerPortal.Core.csproj" />
+    <ProjectReference Include="..\EmployerPortal.Data\EmployerPortal.Data.csproj" />
+  </ItemGroup>
+
 </Project>

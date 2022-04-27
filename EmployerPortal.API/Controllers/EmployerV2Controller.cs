@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using EmployerPortal.API.Data;
-using EmployerPortal.API.IRepository;
-using EmployerPortal.API.Models;
+using EmployerPortal.Core.Models;
+using EmployerPortal.Core.DTOs;
+using EmployerPortal.Core.IRepository;
+using EmployerPortal.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +22,15 @@ namespace EmployerPortal.API.Controllers
     /// or https://localhost:5001/api/Employer?api-version=2.0
     /// </summary>
     //[Route("api/V2/[controller]")] // delcare it this way or use same route but [ApiVersion(2.0)]
-  
+
     [Route("api/{v:apiversion}/[controller]")]  // local host/api/2.0/employerv2
-   // [Route("api/V2/[controller]")]  // local host/api/2.0/employerv2
+                                                // [Route("api/V2/[controller]")]  // local host/api/2.0/employerv2
     [ApiVersion("2.0", Deprecated = true)] // use this if the route of verion 1 and 2 are thesame . // add Deprecated if this endpoint is deprecated
     public class EmployerV2Controller : Controller
     {
 
         // not save and not best practice
-        private DatabaseContext _context;
+        private readonly DatabaseContext _context;
 
         private readonly IUnitOfWork _unitOfWork; // accessed with dependency injection via the constructor
         private readonly ILogger<EmployerV2Controller> _logger;
@@ -63,15 +64,15 @@ namespace EmployerPortal.API.Controllers
         {
 
             //// manually throw new exception to test the Global Exception handler
-           // throw new Exception();
+            // throw new Exception();
 
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
-            
-                // var employers = await _unitOfWork.EmployerRepo.GetAll();
-               // var employers = await _context.Employers.FindAsync();
-               // var results = _mapper.Map<IList<EmployerDTO>>(employers);
-                return Ok(_context.Employers);
-           
+
+            // var employers = await _unitOfWork.EmployerRepo.GetAll();
+             var employers = await _context.Employers.FindAsync();
+            // var results = _mapper.Map<IList<EmployerDTO>>(employers);
+            return  Ok(employers);
+
         }
 
 
@@ -87,12 +88,12 @@ namespace EmployerPortal.API.Controllers
         public async Task<IActionResult> GetEmployersList([FromQuery] RequestParams param)
         {
             // use the Request Params to reduce the result of the result to paging [10 - 50 records return in different pages]
-            
-                // var employers = await _unitOfWork.EmployerRepo.GetAll();
-                var employers = await _unitOfWork.EmployerRepo.GetAll(param);
-                var results = _mapper.Map<IList<EmployerDTO>>(employers);
-                return Ok(results);
-           
+
+            // var employers = await _unitOfWork.EmployerRepo.GetAll();
+            var employers = await _unitOfWork.EmployerRepo.GetAll(param);
+            var results = _mapper.Map<IList<EmployerDTO>>(employers);
+            return Ok(results);
+
         }
 
 
@@ -107,14 +108,14 @@ namespace EmployerPortal.API.Controllers
         // they are both Get methods actions but this accept Id
         public async Task<IActionResult> GetEmployer(int Id)
         {
-           
-                // the Get generic method receives an expression, we can includes the EmployerAllocation, Schedules and relationship managers
-                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees", "Schedules", "EmployerAllocations" });
-                var result = _mapper.Map<EmployerDTO>(employer);
 
-                return Ok(result);
-            
-          
+            // the Get generic method receives an expression, we can includes the EmployerAllocation, Schedules and relationship managers
+            var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id, new List<string> { "Employees", "Schedules", "EmployerAllocations" });
+            var result = _mapper.Map<EmployerDTO>(employer);
+
+            return Ok(result);
+
+
         }
 
 
@@ -136,24 +137,24 @@ namespace EmployerPortal.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            
-                var employer = _mapper.Map<Employer>(employerDTO);
 
-                await _unitOfWork.EmployerRepo.Insert(employer);
-                await _unitOfWork.Save();
+            var employer = _mapper.Map<Employer>(employerDTO);
 
-                // like redirect to Action in mvc
-                // once the employee model is saved it will automatically append the Id to the model
-                // ensure the Get Employer HttpGet definition is labeled with the Action Name
+            await _unitOfWork.EmployerRepo.Insert(employer);
+            await _unitOfWork.Save();
 
-                var createdResource = employer;
-                var actionName = "GetEmployerByID";
-               // var controllerName = nameof(EmployerV2Controller);
-                var routeValues = new { Id = employer.Id };
+            // like redirect to Action in mvc
+            // once the employee model is saved it will automatically append the Id to the model
+            // ensure the Get Employer HttpGet definition is labeled with the Action Name
 
-                return CreatedAtAction(actionName, routeValues, employer);
-                //return Created(employer);
-           
+            var createdResource = employer;
+            var actionName = "GetEmployerByID";
+            // var controllerName = nameof(EmployerV2Controller);
+            var routeValues = new { employer.Id };
+
+            return CreatedAtAction(actionName, routeValues, employer);
+            //return Created(employer);
+
 
 
         }
@@ -173,30 +174,30 @@ namespace EmployerPortal.API.Controllers
                 return BadRequest(ModelState);
             }
 
-           
-                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                if (employer == null)
-                {
-                    _logger.LogError($"Invalid Put Operation attempt in {nameof(UpdateEmployer)}");
-                    return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
-                }
+            var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                _mapper.Map(employerDTO, employer);
+            if (employer == null)
+            {
+                _logger.LogError($"Invalid Put Operation attempt in {nameof(UpdateEmployer)}");
+                return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
+            }
 
-                // var updateEmployer = _mapper.Map<Employer>(employerDTO);
+            _mapper.Map(employerDTO, employer);
 
-                _unitOfWork.EmployerRepo.Update(employer);
-                await _unitOfWork.Save();
+            // var updateEmployer = _mapper.Map<Employer>(employerDTO);
 
-                return NoContent();
+            _unitOfWork.EmployerRepo.Update(employer);
+            await _unitOfWork.Save();
 
-                // like redirect to Action in mvc
-                // once the employee model is saved it will automatically append the Id to the model
-                // ensure the Get Employer HttpGet definition is labeled with the Action Name
+            return NoContent();
 
-                //return Created(employer);
-          
+            // like redirect to Action in mvc
+            // once the employee model is saved it will automatically append the Id to the model
+            // ensure the Get Employer HttpGet definition is labeled with the Action Name
+
+            //return Created(employer);
+
 
         }
 
@@ -214,22 +215,22 @@ namespace EmployerPortal.API.Controllers
                 _logger.LogError($"Invalid Delete Request attempted in {nameof(DeleteEmployer)}");
                 return BadRequest("Invalid ID Parameter");
             }
-            
 
-                var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                if (employer == null)
-                {
-                    _logger.LogError($"Invalid Delete Operation attempt in {nameof(UpdateEmployer)}");
-                    return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
-                }
+            var employer = await _unitOfWork.EmployerRepo.Get(q => q.Id == Id);
 
-                await _unitOfWork.EmployerRepo.Delete(employer.Id);
-                await _unitOfWork.Save();
+            if (employer == null)
+            {
+                _logger.LogError($"Invalid Delete Operation attempt in {nameof(UpdateEmployer)}");
+                return BadRequest($"Submitted Data is Invalid. No Employer with Id {Id} Found");
+            }
 
-                return NoContent();
+            await _unitOfWork.EmployerRepo.Delete(employer.Id);
+            await _unitOfWork.Save();
 
-           
+            return NoContent();
+
+
         }
 
 
